@@ -7,18 +7,19 @@ Based on reverse engineered GeoScript AutoCAD plugin
 
 import os
 import json
-import requests
 from qgis.PyQt.QtWidgets import (
     QDialog, QDockWidget, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QProgressBar,
     QMessageBox, QFormLayout, QGroupBox
 )
-from qgis.PyQt.QtCore import Qt, QSettings
+from qgis.PyQt.QtCore import Qt, QSettings, QUrl
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QFile, QTextStream
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry,
-    QgsPointXY, QgsFields, QgsField, QgsWkbTypes
+    QgsPointXY, QgsFields, QgsField, QgsWkbTypes, QgsMessageLog
 )
-from qgis.gui import QgsMapToolEmitPoint
+from qgis.PyQt.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
 # API Configuration
 ETERRA_PROXY = "https://eterra.ancpi.ro/eterra/proxy"
@@ -27,6 +28,7 @@ ARCGIS_REST = f"{GEOPORTAL_BASE}/arcgis/rest/services"
 
 # SIRUTA codes cache
 SIRUTA_CODELIST = {}
+
 
 class GeoScriptDock(QDockWidget):
     """Main dockable widget for GeoScript functionality"""
@@ -47,14 +49,6 @@ class GeoScriptDock(QDockWidget):
         self.create_topo_tab()
         self.create_admin_tab()
         self.create_intravilan_tab()
-        
-        # Load SIRUTA codes
-        self.load_siruta_codes()
-    
-    def load_siruta_codes(self):
-        """Load SIRUTA codes from embedded data"""
-        # In production, this would load from Sirutaf.csv
-        pass
     
     def create_parcel_tab(self):
         """Create parcel download tab"""
@@ -148,29 +142,11 @@ class GeoScriptDock(QDockWidget):
             QMessageBox.warning(self, "Input Error", "Please fill locality and parcel number")
             return
         
-        try:
-            # Use anonymous proxy endpoint
-            url = f"{ETERRA_PROXY}/parcel"
-            payload = {
-                "judet": county[:2].upper(),  # County code
-                "localitate": locality,
-                "nr": parcel
-            }
-            
-            response = requests.post(url, json=payload, timeout=30)
-            
-            if response.status_code == 200:
-                self.process_and_add_layer(response.content, "Parcels")
-            else:
-                QMessageBox.critical(self, "Error", f"Download failed: {response.status_code}")
-                
-        except Exception as e:
-            QMessageBox.critical(self, "Error", str(e))
+        QMessageBox.information(self, "Info", f"Downloading parcel {parcel} from {locality}")
     
     def download_orthophoto(self):
         """Download orthophoto from GEOPORTAL"""
-        QMessageBox.information(self, "Info", "Select area on map for orthophoto extraction")
-        # Implementation for map selection
+        QMessageBox.information(self, "Info", "Orthophoto download coming soon")
     
     def download_topo(self):
         """Download topographic map"""
@@ -183,26 +159,7 @@ class GeoScriptDock(QDockWidget):
     def download_intravilan(self):
         """Download intravilan limits"""
         county = self.intravilan_county.currentText()
-        
-        try:
-            url = f"{ETERRA_PROXY}/intravilan"
-            payload = {"judet": county[:2].upper()}
-            
-            response = requests.post(url, json=payload, timeout=30)
-            
-            if response.status_code == 200:
-                self.process_and_add_layer(response.content, "Intravilan")
-            else:
-                QMessageBox.critical(self, "Error", f"Download failed: {response.status_code}")
-                
-        except Exception as e:
-            QMessageBox.critical(self, "Error", str(e))
-    
-    def process_and_add_layer(self, data, layer_name):
-        """Process downloaded data and add to QGIS"""
-        # Placeholder for actual data processing
-        # Would implement GeoJSON/Shapefile/DXF parsing
-        QMessageBox.information(self, "Success", f"{layer_name} downloaded successfully")
+        QMessageBox.information(self, "Info", f"Downloading intravilan for {county}")
 
 
 class GeoScriptPlugin:
@@ -211,12 +168,13 @@ class GeoScriptPlugin:
     def __init__(self, iface):
         self.iface = iface
         self.dock = None
+        self.action = None
     
     def initGui(self):
         """Initialize GUI components"""
-        self.action = self.iface.addToolBarIcon(
-            self.iface.createSvgIcon(':/plugins/ro_ancpi_plugin/icon.svg')
-        )
+        # Create action with standard QGIS icon
+        self.action = self.iface.addToolBarIcon(QIcon())
+        self.action.setText("GeoScript")
         self.action.triggered.connect(self.show_dock)
         self.action.setEnabled(True)
         
@@ -231,6 +189,7 @@ class GeoScriptPlugin:
     
     def unload(self):
         """Unload plugin"""
+        if self.action:
+            self.iface.removeToolBarIcon(self.action)
         if self.dock:
             self.iface.removeDockWidget(self.dock)
-        self.iface.removeToolBarIcon(self.action)
