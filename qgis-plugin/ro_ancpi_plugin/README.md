@@ -116,13 +116,25 @@ https://geoportal.ancpi.ro/arcgis/rest/services/Topo/MapServer
 
 ## Part 4: Installation
 
-1. Copy plugin folder to QGIS plugins directory:
-   - Linux: `~/.local/share/QGIS/QGIS3/profiles/default/plugins/`
-   - Windows: `%APPDATA%\QGIS\QGIS3\profiles\default\plugins\`
+### Method 1: From ZIP File (Recommended)
+1. Download `ro_ancpi_plugin-v1.0.0.zip`
+2. **Extract the ZIP** - you'll get a folder named `ro_ancpi_plugin`
+3. **Copy ONLY that folder** (NOT the parent folders) to QGIS plugins:
+   - **Linux:** `~/.local/share/QGIS/QGIS3/profiles/default/plugins/ro_ancpi_plugin/`
+   - **Windows:** `%APPDATA%\QGIS\QGIS3\profiles\default\plugins\ro_ancpi_plugin\`
 
-2. Restart QGIS
+⚠️ **Common mistake:** Don't copy parent folders like `geogis-qgis-plugin/qgis-plugin/ro_ancpi_plugin` - that breaks Python module naming!
 
-3. Enable plugin from Plugins → Manage and Install Plugins
+### Method 2: From GitHub
+```bash
+# Clone and copy the correct folder
+git clone https://github.com/serverul/geogis.git
+cp -r geogis/qgis-plugin/ro_ancpi_plugin ~/.local/share/QGIS/QGIS3/profiles/default/plugins/
+```
+
+4. Restart QGIS
+
+5. Enable plugin from Plugins → Manage and Install Plugins → Enable GeoScript
 
 ---
 
