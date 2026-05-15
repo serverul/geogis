@@ -1,0 +1,22 @@
+# GeoScript QGIS Plugin - Romanian Cadastral Data Access
+
+[general]
+name=ro_ancpi_plugin
+description=Access Romanian cadastral data from ANCPI (ETERRA 3 and GEOPORTAL)
+category=Web Services
+version=1.0.0
+qgisMinimumVersion=3.0
+author=Berry (based on GeoScript by Benedictum)
+email=berry@example.com
+repository=https://github.com/berry/ro_ancpi_plugin
+homepage=https://github.com/berry/ro_ancpi_plugin
+tracker=https://github.com/berry/ro_ancpi_plugin/issues
+
+[optional]
+experimental=false
+deprecated=false
+
+[downloads]
+linux=yes
+windows=yes
+macosx=yes
