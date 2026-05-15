@@ -1,6 +1,6 @@
 # GeoGIS - Romanian Geospatial Tools
 
-A collection of geospatial tools for accessing Romanian cadastral and map data from ANCPI services (ETERRA 3 and GEOPORTAL).
+A collection of geospatial tools for accessing Romanian cadastral and map data from ANCPI services.
 
 ## 🚀 QGIS Plugin
 
@@ -10,7 +10,7 @@ Access ETERRA 3 and GEOPORTAL ANCPI without authentication!
 
 ### Features
 - **Parcel Download (g6)** - Download cadastral parcel geometries from ETERRA 3
-- **Orthophoto Plans (o5)** - Download orthophoto images from GEOPORTAL  
+- **Orthophoto Plans (o5)** - Download orthophoto images from GEOPORTAL
 - **Topographic Maps (i5)** - Download topo maps
 - **Admin Boundaries (u5)** - Download administrative boundaries
 - **Intravilan Limits (u6)** - Download urban area boundaries
@@ -18,12 +18,12 @@ Access ETERRA 3 and GEOPORTAL ANCPI without authentication!
 - **Request Status (ipk)** - Check cadastral request status
 
 ### Installation
-1. Download the plugin from the `qgis-plugin` branch or releases
-2. Extract and copy the `ro_ancpi_plugin` folder to your QGIS plugins directory:
-   ```bash
-   cp -r ro_ancpi_plugin ~/.local/share/QGIS/QGIS3/profiles/default/plugins/
-   ```
-3. Restart QGIS and enable via Plugins → Manage and Install Plugins
+```bash
+# Copy plugin to QGIS directory
+cp -r qgis-plugin/ro_ancpi_plugin ~/.local/share/QGIS/QGIS3/profiles/default/plugins/
+```
+
+Restart QGIS and enable via Plugins → GeoScript.
 
 ## 🔍 Technical Details
 
@@ -35,7 +35,7 @@ This plugin uses ANCPI's **public anonymous proxy endpoints** that don't require
 https://eterra.ancpi.ro/eterra/proxy/parcel   → 200 OK
 
 # Authenticated API (requires login)  
-https://eterra.ancpi.ro/api/proxy              → 401 Unauthorized
+https://eterra.ancpi.ro/api/proxy            → 401 Unauthorized
 ```
 
 ### API Endpoints Discovered
@@ -48,12 +48,11 @@ https://eterra.ancpi.ro/api/proxy              → 401 Unauthorized
 | GEOPORTAL | `/arcgis/rest/services/` | ✅ Public |
 
 ## 📚 Documentation
-- [Plugin README](qgis-plugin/ro_ancpi_plugin/README.md) - Installation & Usage
-- [Plugin Specification](qgis-plugin/ro_ancpi_plugin/PLUGIN_SPEC.md) - Technical details
-- [Project Summary](PROJECT_SUMMARY.md) - Research findings
+- [Plugin Specification](qgis-plugin/ro_ancpi_plugin/PLUGIN_SPEC.md)
+- [Plugin README](qgis-plugin/ro_ancpi_plugin/README.md)
 
 ## 🤝 Contributing
-Pull requests welcome! See project documentation for details.
+Pull requests welcome! See [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for research findings.
 
 ## 📄 License
 See [LICENSE](LICENSE) file.

@@ -1,0 +1,6 @@
+<!-- QGIS Resource File -->
+<RCC>
+  <qresource prefix="/plugins/ro_ancpi_plugin">
+    <file>icons/icon.svg</file>
+  </qresource>
+</RCC>
