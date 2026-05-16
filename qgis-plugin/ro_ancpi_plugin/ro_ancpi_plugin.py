@@ -11,8 +11,9 @@ import requests
 from qgis.PyQt.QtWidgets import (
     QDialog, QDockWidget, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QProgressBar,
-    QMessageBox, QFormLayout, QGroupBox
+    QMessageBox, QFormLayout, QGroupBox, QAction
 )
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry,
@@ -211,14 +212,19 @@ class GeoScriptPlugin:
     def __init__(self, iface):
         self.iface = iface
         self.dock = None
+        self.action = None
     
     def initGui(self):
         """Initialize GUI components"""
-        self.action = self.iface.addToolBarIcon(
-            self.iface.createSvgIcon(':/plugins/ro_ancpi_plugin/icon.svg')
-        )
+        # FIXED for QGIS 3.x - create QAction instead of passing QIcon directly
+        icon = QIcon(":/plugins/ro_ancpi_plugin/icon.svg")
+        self.action = QAction(icon, "ANCPI GeoScript", self.iface.mainWindow())
         self.action.triggered.connect(self.show_dock)
-        self.action.setEnabled(True)
+        
+        self.iface.addToolBarIcon(self.action)
+        
+        # Also add to menu
+        self.iface.addPluginToMenu("&ANCPI GeoScript", self.action)
         
         # Create dock widget
         self.dock = GeoScriptDock(self.iface)
@@ -233,4 +239,6 @@ class GeoScriptPlugin:
         """Unload plugin"""
         if self.dock:
             self.iface.removeDockWidget(self.dock)
-        self.iface.removeToolBarIcon(self.action)
+        if self.action:
+            self.iface.removeToolBarIcon(self.action)
+            self.iface.removePluginMenu("&ANCPI GeoScript", self.action)
